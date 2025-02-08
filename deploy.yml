@@ -1,0 +1,22 @@
+apiVersion: apps/v1  # Define a versão da API do Kubernetes para deployments.
+kind: Deployment  # Especifica que este recurso é um Deployment.
+metadata:
+  name: httpd  # Nome do deployment, usado para identificação no cluster.
+  labels:
+    app: httpd  # Rótulo que pode ser usado para identificar este deployment.
+spec:
+  replicas: 6  # Define que queremos 6 réplicas do pod rodando simultaneamente.
+  selector:
+    matchLabels:
+      app: httpd  # Garante que este deployment gerencie apenas pods com este rótulo.
+  template:
+    metadata:
+      labels:
+        app: httpd  # Rótulo aplicado aos pods criados por este template.
+    spec:
+      containers:
+      - name: httpd  # Nome do container dentro do pod.
+        image: httpd:2  # Define a imagem usada (Apache HTTP Server, versão 2).
+        imagePullPolicy: Always  # Sempre puxa a imagem mais recente do repositório.
+        ports:
+        - containerPort: 80  # Expõe a porta 80 do container para tráfego HTTP.
