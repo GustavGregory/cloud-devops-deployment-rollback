@@ -17,7 +17,7 @@ O projeto implementa um **Deployment** Kubernetes para o servidor HTTP Apache (`
 
 ## 📂 Estrutura do Repositório
 ```
-📦 cloud-devops-deployment-e-rollback
+📦 cloud-devops-deployment-rollback
  ├── 📜 README.md        # Documentação do projeto
  ├── 📜 deployment.yml   # Arquivo de deployment Kubernetes
  ├── 📜 rollback.sh      # Script para rollback (se necessário)
@@ -48,7 +48,7 @@ spec:
     spec:
       containers:
       - name: httpd
-        image: httpd:2
+        image: httpd:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -56,7 +56,7 @@ spec:
 
 ### Explicação do Código
 - **replicas: 6** → Mantém 6 instâncias do servidor rodando.
-- **image: httpd:2** → Usa a versão 2 do servidor Apache HTTP.
+- **image: httpd:2** → Usa a versão mais recente do servidor Apache HTTP.
 - **ports: 80** → Expõe a porta 80 para receber requisições HTTP.
 
 ---
@@ -96,4 +96,4 @@ kubectl rollout undo deployment/httpd
 ---
 
 ## 📢 Contato
-📧 [gustavogregoriodelima@gmail.com] | 🌎 [https://www.linkedin.com/in/gustavo-grigorio-de-lima] | 🚀 [https://www.github.com/GustavGregory]
+📧 *Email:* gustavogregoriodelima@gmail.com | 🌎 *LinkedIn:* https://www.linkedin.com/in/gustavo-grigorio-de-lima
