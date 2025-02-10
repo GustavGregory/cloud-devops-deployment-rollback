@@ -56,7 +56,7 @@ spec:
 
 ### Explicação do Código
 - **replicas: 6** → Mantém 6 instâncias do servidor rodando.
-- **image: httpd:2** → Usa a versão mais recente do servidor Apache HTTP.
+- **image: httpd:latest** → Usa a versão mais recente do servidor Apache HTTP.
 - **ports: 80** → Expõe a porta 80 para receber requisições HTTP.
 
 ---
