@@ -73,7 +73,7 @@ Isso reverte para a versão anterior do deployment, garantindo disponibilidade e
 ## 📌 Como Aplicar o Deployment no Kubernetes
 1️⃣ **Criar o deployment:**
 ```sh
-kubectl apply -f deployment.yml
+kubectl apply -f deploy.yml
 ```
 
 2️⃣ **Verificar status dos pods:**
