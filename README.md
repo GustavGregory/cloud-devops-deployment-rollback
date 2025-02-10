@@ -11,7 +11,6 @@ O projeto implementa um **Deployment** Kubernetes para o servidor HTTP Apache (`
 - **Minikube** - Orquestração de containers
 - **Docker Desktop** - Containerização da aplicação
 - **YAML** - Definição do deployment
-- **GitHub Actions** *(opcional)* - CI/CD para automação
 
 ---
 
@@ -21,6 +20,8 @@ O projeto implementa um **Deployment** Kubernetes para o servidor HTTP Apache (`
  ├── 📜 README.md        # Documentação do projeto
  ├── 📜 deploy.yml       # Arquivo de deployment Kubernetes
  ├── 📜 rollback.sh      # Script para rollback (se necessário)
+ ├── 📜 mysql.yml        # Deployment do MySQL com Secrets
+ ├── 📜 secrets.yml      # Arquivo de Secrets
  ├── 📜 .gitignore       # Arquivos ignorados pelo Git
 ```
 
@@ -68,6 +69,88 @@ kubectl rollout undo deployment/httpd
 ```
 Isso reverte para a versão anterior do deployment, garantindo disponibilidade e segurança.
 
+Para voltar para uma versão específica, por exemplo, a primeira versão do deployment:
+```sh
+kubectl rollout undo deployment/httpd --to-revision=1
+```
+
+---
+
+## 📌 Melhores Práticas para Deployment
+Para manter um histórico organizado e facilitar rollbacks, nomeie os arquivos de deployment seguindo este padrão:
+- **Versão específica:** `httpd-deployment-1.0.yml`
+- **Última versão:** `httpd-deployment-latest.yml`
+
+Isso facilita a consulta do histórico e a execução de rollbacks ou rollouts.
+
+---
+
+## 📌 Trabalhando com Secrets no Kubernetes
+### Arquivo `secrets.yml`
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+type: Opaque
+data:
+  ROOT_PASSWORD: U2VuaGExMjMh
+  MYSQL_DATABASE: meubanco
+```
+> **Observação:** Os valores precisam estar em **Base64**.
+
+### Aplicando o Secret
+```sh
+kubectl apply -f secrets.yml
+```
+
+### Listando Secrets
+```sh
+kubectl get secrets
+```
+
+### Excluindo um Secret
+```sh
+kubectl delete secret my-secret
+```
+
+---
+
+## 📄 Deployment do MySQL com Secrets
+### Arquivo `mysql.yml`
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: MYSQL_DATABASE
+        ports:
+        - containerPort: 3306
+```
+
 ---
 
 ## 📌 Como Aplicar o Deployment no Kubernetes
@@ -90,30 +173,14 @@ kubectl describe deployment httpd
 
 4️⃣ **Se necessário, fazer rollback:**
 ```sh
-kubectl rollout undo deployment/httpd
+kubectl rollout undo deployment/httpd --to-revision=1
 ```
+> Retorna o deployment para a primeira versão registrada.
 
 5️⃣ **Verificar o histórico de revisões do deployment:**
 ```sh
 kubectl rollout history deployment/httpd
 ```
-> Exibe todas as versões anteriores do deployment, permitindo análise e rollback específico, se necessário.
-
----
-
-## 📌 Próximos Passos
-Na próxima parte da videoaula, serão abordados os seguintes tópicos:
-✅ **Organizando o histórico de deployment**
-✅ **Gerenciamento de Secrets no Kubernetes**
-
----
-
-## 🛠 Melhorias Futuras
-✅ Configuração de um **Service** para exposição externa
-✅ Estratégias avançadas de rollback (Blue-Green Deployment, Canary Releases)
-✅ Integração com CI/CD usando GitHub Actions
-✅ Organização eficiente do histórico de deployments
-✅ Implementação de **Secrets** para segurança de credenciais
 
 ---
 
